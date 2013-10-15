@@ -1,0 +1,17 @@
+<RCC>
+    <qresource prefix="/asset">
+        <file>logo_ekz.png</file>
+        <file>logo_dograt.png</file>
+        <file>zif16.png</file>
+        <file>program.png</file>
+        <file>config.png</file>
+        <file>erase.png</file>
+        <file>detect.png</file>
+        <file>read.png</file>
+        <file>verify.png</file>
+        <file>write.png</file>
+        <file>spi-generic.ekz</file>
+        <file>yes.png</file>
+        <file>info.png</file>
+    </qresource>
+</RCC>

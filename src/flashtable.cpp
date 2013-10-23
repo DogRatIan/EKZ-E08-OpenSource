@@ -33,6 +33,7 @@
 //==========================================================================
 //==========================================================================
 #define IMAGEFILE_GENERAL_SFLASH     "spi-generic.ekz"
+#define IMAGEFILE_SST_SFLASH         "spi-sst.ekz"
 
 //==========================================================================
 // Singleton CFlashTable
@@ -72,7 +73,7 @@ static const struct TFlashInfo KSerialFlashTable[] = {
     {"ATMEL",       0x1F4401,   "AT25DF041A",           4096, 128,  256, 512,  3.3, IMAGEFILE_GENERAL_SFLASH},
     {"ATMEL",       0x1F4502,   "AT25DF081",            4096, 256,  256, 1024, 3.3, IMAGEFILE_GENERAL_SFLASH},
     {"ATMEL",       0x1F4602,   "AT25DF161",            4096, 512,  256, 2048, 3.3, IMAGEFILE_GENERAL_SFLASH},
-    {"ATMEL",       0x1F4700,   "AT25DF321/AT26DF321",  4096, 1024, 256, 4096, 3.3, IMAGEFILE_GENERAL_SFLASH},
+    {"ATMEL",       0x1F4700,   "AT(25/26)DF321",       4096, 1024, 256, 4096, 3.3, IMAGEFILE_GENERAL_SFLASH},
     {"ATMEL",       0x1F4701,   "AT25DF321A",           4096, 1024, 256, 4096, 3.3, IMAGEFILE_GENERAL_SFLASH},
     {"ATMEL",       0x1F4800,   "AT25DF641",            4096, 2048, 256, 8192, 3.3, IMAGEFILE_GENERAL_SFLASH},
     {"ATMEL",       0x1F4501,   "AT26DF081A",           4096, 256,  256, 1024, 3.3, IMAGEFILE_GENERAL_SFLASH},
@@ -81,7 +82,6 @@ static const struct TFlashInfo KSerialFlashTable[] = {
     {"SPANSION",    0x010212,   "S25FL004A/040A",       4096, 128,  256, 512,  3.3, IMAGEFILE_GENERAL_SFLASH},
     {"SPANSION",    0x010213,   "S25FL008A",            4096, 256,  256, 1024, 3.3, IMAGEFILE_GENERAL_SFLASH},
     {"SPANSION",    0x010214,   "S25FL016A",            4096, 512,  256, 2048, 3.3, IMAGEFILE_GENERAL_SFLASH},
-    {"SPANSION",    0xBF2541,   "S25FL016A",            4096, 512,  256, 2048, 3.3, IMAGEFILE_GENERAL_SFLASH},
     {"SPANSION",    0x010215,   "S25FL032A",            4096, 1024, 256, 4096, 3.3, IMAGEFILE_GENERAL_SFLASH},
     {"SPANSION",    0x010216,   "S25FL064A",            4096, 2048, 256, 8192, 3.3, IMAGEFILE_GENERAL_SFLASH},
     {"EON",         0x1C3014,   "EN25D80",              4096, 256,  256, 1024, 3.3, IMAGEFILE_GENERAL_SFLASH},
@@ -94,6 +94,15 @@ static const struct TFlashInfo KSerialFlashTable[] = {
     {"AMIC",        0x373014,   "A25L080",              4096, 256,  256, 1024, 3.3, IMAGEFILE_GENERAL_SFLASH},
     {"AMIC",        0x373015,   "A25L016",              4096, 512,  256, 2048, 3.3, IMAGEFILE_GENERAL_SFLASH},
     {"AMIC",        0x373016,   "A25L032",              4096, 1024, 256, 4096, 3.3, IMAGEFILE_GENERAL_SFLASH},
+    {"SST",         0xBF48FF,   "SST25VF512/A",         4096, 16,   256, 64,   3.3, IMAGEFILE_SST_SFLASH},
+    {"SST",         0xBF49FF,   "SST25(LF/VF)010/A",    4096, 32,   256, 128,  3.3, IMAGEFILE_SST_SFLASH},
+    {"SST",         0xBF43FF,   "SST25(LF/VF)020/A",    4096, 64,   256, 256,  3.3, IMAGEFILE_SST_SFLASH},
+    {"SST",         0xBF258C,   "SST25(PF/VF)020B",     4096, 64,   256, 256,  3.3, IMAGEFILE_SST_SFLASH},
+    {"SST",         0xBF44FF,   "SST25(LF/VF)040/A",    4096, 128,  256, 512,  3.3, IMAGEFILE_SST_SFLASH},
+    {"SST",         0xBF258D,   "SST25(PF/VF)040B",     4096, 128,  256, 512,  3.3, IMAGEFILE_SST_SFLASH},
+    {"SST",         0xBF258E,   "SST25(PF/VF)080B",     4096, 256,  256, 1024, 3.3, IMAGEFILE_SST_SFLASH},
+    {"SST",         0xBF2541,   "SST25VF016B",          4096, 512,  256, 2048, 3.3, IMAGEFILE_SST_SFLASH},
+    {"SST",         0xBF254A,   "SST25VF032B",          4096, 1024, 256, 4096, 3.3, IMAGEFILE_SST_SFLASH},
     {NULL,          0,          NULL,                   0,    0,    0,   0,    0,   0}};
 
 //==========================================================================

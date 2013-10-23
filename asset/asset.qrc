@@ -13,5 +13,6 @@
         <file>spi-generic.ekz</file>
         <file>yes.png</file>
         <file>info.png</file>
+        <file>spi-sst.ekz</file>
     </qresource>
 </RCC>

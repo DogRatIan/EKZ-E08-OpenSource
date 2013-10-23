@@ -384,13 +384,13 @@
            <widget class="QLabel" name="label_2">
             <property name="minimumSize">
              <size>
-              <width>65</width>
+              <width>50</width>
               <height>0</height>
              </size>
             </property>
             <property name="maximumSize">
              <size>
-              <width>60</width>
+              <width>50</width>
               <height>16777215</height>
              </size>
             </property>
@@ -406,13 +406,13 @@
            <widget class="QLabel" name="label">
             <property name="minimumSize">
              <size>
-              <width>65</width>
+              <width>50</width>
               <height>0</height>
              </size>
             </property>
             <property name="maximumSize">
              <size>
-              <width>60</width>
+              <width>50</width>
               <height>16777215</height>
              </size>
             </property>
@@ -454,13 +454,13 @@
            <widget class="QLabel" name="label_5">
             <property name="minimumSize">
              <size>
-              <width>65</width>
+              <width>50</width>
               <height>0</height>
              </size>
             </property>
             <property name="maximumSize">
              <size>
-              <width>60</width>
+              <width>50</width>
               <height>16777215</height>
              </size>
             </property>
@@ -489,13 +489,13 @@
            <widget class="QLabel" name="label_12">
             <property name="minimumSize">
              <size>
-              <width>65</width>
+              <width>50</width>
               <height>0</height>
              </size>
             </property>
             <property name="maximumSize">
              <size>
-              <width>60</width>
+              <width>50</width>
               <height>16777215</height>
              </size>
             </property>
@@ -643,13 +643,13 @@
            <widget class="QLabel" name="label_9">
             <property name="minimumSize">
              <size>
-              <width>65</width>
+              <width>50</width>
               <height>0</height>
              </size>
             </property>
             <property name="maximumSize">
              <size>
-              <width>60</width>
+              <width>50</width>
               <height>16777215</height>
              </size>
             </property>
@@ -1452,7 +1452,7 @@
      <x>0</x>
      <y>0</y>
      <width>618</width>
-     <height>22</height>
+     <height>17</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">

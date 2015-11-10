@@ -69,6 +69,7 @@ static const struct TFlashInfo KSerialFlashTable[] = {
     {"WINBOND",     0xEF4015,   "W25Q16",               4096, 512,  256, 2048, 3.3, IMAGEFILE_GENERAL_SFLASH},
     {"WINBOND",     0xEF3016,   "W25X32",               4096, 1024, 256, 4096, 3.3, IMAGEFILE_GENERAL_SFLASH},
     {"WINBOND",     0xEF3017,   "W25X64",               4096, 2048, 256, 8192, 3.3, IMAGEFILE_GENERAL_SFLASH},
+    {"WINBOND",     0xEF4018,   "W25Q128",              4096, 4096, 256, 16384, 3.3, IMAGEFILE_GENERAL_SFLASH},
     {"ATMEL",       0x1F4300,   "AT25DF021",            4096, 64,   256, 256,  3.3, IMAGEFILE_GENERAL_SFLASH},
     {"ATMEL",       0x1F4401,   "AT25DF041A",           4096, 128,  256, 512,  3.3, IMAGEFILE_GENERAL_SFLASH},
     {"ATMEL",       0x1F4502,   "AT25DF081",            4096, 256,  256, 1024, 3.3, IMAGEFILE_GENERAL_SFLASH},
@@ -103,6 +104,7 @@ static const struct TFlashInfo KSerialFlashTable[] = {
     {"SST",         0xBF258E,   "SST25(PF/VF)080B",     4096, 256,  256, 1024, 3.3, IMAGEFILE_SST_SFLASH},
     {"SST",         0xBF2541,   "SST25VF016B",          4096, 512,  256, 2048, 3.3, IMAGEFILE_SST_SFLASH},
     {"SST",         0xBF254A,   "SST25VF032B",          4096, 1024, 256, 4096, 3.3, IMAGEFILE_SST_SFLASH},
+    {"China",       0xC86017,   "25L064",               4096, 2048, 256, 8192, 3.3, IMAGEFILE_GENERAL_SFLASH},
     {NULL,          0,          NULL,                   0,    0,    0,   0,    0,   0}};
 
 //==========================================================================

@@ -819,7 +819,7 @@ int CProgrammer::blankCheck (unsigned long aBlankSize)
     ptr += PackU32 (ptr, 0);
     ptr += PackU32 (ptr, aBlankSize);
     tx_len = ptr - TxBuf;
-    rx_len = sendCommand (TxBuf, tx_len, RxBuf, sizeof (RxBuf), 10000);
+    rx_len = sendCommand (TxBuf, tx_len, RxBuf, sizeof (RxBuf), 60000);
     if (rx_len < 2)
     {
         errorMessage = QString ("Fail to blank check FLASH. Invalid Response.");

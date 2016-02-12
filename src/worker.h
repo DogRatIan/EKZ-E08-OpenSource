@@ -70,7 +70,7 @@ public:
 
     void requestAbort (void);
     void setPortName (QString aPortName);
-    void setAction (int aAction);
+    void setAction (int aAction, bool aCheckBoxValue = false);
     void setFlashInfo (const struct TFlashInfo *aFlashInfo);
     void loadDataBuffer (const unsigned char *aSrc, unsigned long aSize);
 
@@ -96,6 +96,7 @@ private:
     QString currentPortName;
     int currentAction;
     const struct TFlashInfo *currentFlashInfo;
+    bool checkBoxValue;
 
     void setupProgrammer (CProgrammer *aProgrammer);
     void doActionCheckProgrammer (CProgrammer *aProgrammer);

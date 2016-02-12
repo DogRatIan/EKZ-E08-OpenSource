@@ -164,12 +164,13 @@ void CWorker::setPortName (QString aPortName)
 //==========================================================================
 // Set Action
 //==========================================================================
-void CWorker::setAction (int aAction)
+void CWorker::setAction (int aAction, bool aCheckBoxValue)
 {
     if (isRunning())
         return;
 
     currentAction = aAction;
+    checkBoxValue = aCheckBoxValue;
     actionSuccess = false;
 }
 
@@ -428,10 +429,20 @@ void CWorker::doActionWrite (CProgrammer *aProgrammer)
         throw (QString ("Device ID not match."));
     }
 
-    // Blank Check
-    emit logMessage (QString ("Blank Check."));
-    if (aProgrammer->blankCheck (currentFlashInfo->totalSizeKiB * 1024) < 0)
-        throw (aProgrammer->errorMessage);
+    if (checkBoxValue)
+    {
+        // Erase Device
+        emit logMessage (QString ("Erase started. Please wait for a moment."));
+        if (aProgrammer->eraseFlash () < 0)
+            throw (aProgrammer->errorMessage);
+    }
+    else
+    {
+        // Blank Check
+        emit logMessage (QString ("Blank Check."));
+        if (aProgrammer->blankCheck (currentFlashInfo->totalSizeKiB * 1024) < 0)
+            throw (aProgrammer->errorMessage);
+    }
 
     // Write data
     emit logMessage (QString ().sprintf ("Writing %ld bytes...", dataBufferSize));

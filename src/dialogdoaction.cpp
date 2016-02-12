@@ -58,6 +58,7 @@ CDialogDoAction::CDialogDoAction (QWidget *aParent, int aAction) :
             setWindowIcon(QIcon (":/asset/read.png"));
             ui->buttonOk->setText ("Read");
             ui->buttonOk->setIcon(QIcon (":/asset/read.png"));
+            ui->checkBox->setVisible (false);
             break;
 
         case DOACTIONDIALOG_WRITE:
@@ -65,6 +66,8 @@ CDialogDoAction::CDialogDoAction (QWidget *aParent, int aAction) :
             setWindowIcon(QIcon (":/asset/write.png"));
             ui->buttonOk->setText ("Write");
             ui->buttonOk->setIcon(QIcon (":/asset/write.png"));
+            ui->checkBox->setText("Erase First");
+            ui->checkBox->setVisible (true);
             break;
 
         case DOACTIONDIALOG_VERIFY:
@@ -72,6 +75,7 @@ CDialogDoAction::CDialogDoAction (QWidget *aParent, int aAction) :
             setWindowIcon(QIcon (":/asset/verify.png"));
             ui->buttonOk->setText ("Verify");
             ui->buttonOk->setIcon(QIcon (":/asset/verify.png"));
+            ui->checkBox->setVisible (false);
             break;
 
         case DOACTIONDIALOG_ERASE:
@@ -79,6 +83,7 @@ CDialogDoAction::CDialogDoAction (QWidget *aParent, int aAction) :
             setWindowIcon(QIcon (":/asset/erase.png"));
             ui->buttonOk->setText ("Erase");
             ui->buttonOk->setIcon(QIcon (":/asset/erase.png"));
+            ui->checkBox->setVisible (false);
             break;
 
         case DOACTIONDIALOG_DETECT:
@@ -86,6 +91,7 @@ CDialogDoAction::CDialogDoAction (QWidget *aParent, int aAction) :
             setWindowIcon(QIcon (":/asset/detect.png"));
             ui->buttonOk->setText ("Detect");
             ui->buttonOk->setIcon(QIcon (":/asset/detect.png"));
+            ui->checkBox->setVisible (false);
             break;
 
         default:
@@ -223,7 +229,7 @@ void CDialogDoAction::on_buttonOk_clicked()
 
         case DOACTIONDIALOG_WRITE:
             worker.setFlashInfo (flashInfo);
-            worker.setAction (WORKERACTION_WRITE);
+            worker.setAction (WORKERACTION_WRITE, ui->checkBox->isChecked());
             worker.start ();
             break;
 
@@ -262,6 +268,7 @@ void CDialogDoAction::setControls (bool aRunning)
 {
     ui->buttonOk->setEnabled (!aRunning);
     ui->buttonCancel->setEnabled (!aRunning);
+    ui->checkBox->setEnabled (!aRunning);
 
     if (aRunning)
         setCursor (Qt::WaitCursor);

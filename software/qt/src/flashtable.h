@@ -45,6 +45,7 @@ struct TFlashInfo
     int numOfSector;
     int pageSize;
     int totalSizeKiB;
+    unsigned long chipEraseTime;
     double voltage;
     const char *imageFile;
 };

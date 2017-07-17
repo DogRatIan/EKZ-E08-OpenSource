@@ -766,19 +766,23 @@ int CProgrammer::writeFlash (const unsigned char *aSrc, unsigned long aSize)
 //==========================================================================
 // Erase Chip
 //==========================================================================
-int CProgrammer::eraseFlash (void)
+int CProgrammer::eraseFlash (unsigned long aEraseTime)
 {
     int rx_len;
     int tx_len;
     unsigned char *ptr;
+    unsigned long timeout;
 
     // Chip Erase
-    qDebug () << QString ("[DEBUG] Chip Erase. (It may take several seconds.)");
+    qDebug () << QString ("[DEBUG] Chip Erase. (It may take several minutes.)");
+    qDebug () << QString ("[DEBUG] Erase Time=") << aEraseTime << "s";
+    timeout = (aEraseTime + 10) * 1000;
     memset (RxBuf, 0, sizeof (RxBuf));
     ptr = TxBuf;
     ptr += PackU8 (ptr, CMD_CHIP_ERASE);
+    ptr += PackU32 (ptr, timeout);
     tx_len = ptr - TxBuf;
-    rx_len = sendCommand (TxBuf, tx_len, RxBuf, sizeof (RxBuf), 60000);
+    rx_len = sendCommand (TxBuf, tx_len, RxBuf, sizeof (RxBuf), timeout);
     if (rx_len < 2)
     {
         errorMessage = QString ("Fail to erase FLASH. Invalid Response.");
@@ -819,7 +823,7 @@ int CProgrammer::blankCheck (unsigned long aBlankSize)
     ptr += PackU32 (ptr, 0);
     ptr += PackU32 (ptr, aBlankSize);
     tx_len = ptr - TxBuf;
-    rx_len = sendCommand (TxBuf, tx_len, RxBuf, sizeof (RxBuf), 60000);
+    rx_len = sendCommand (TxBuf, tx_len, RxBuf, sizeof (RxBuf), 250000);
     if (rx_len < 2)
     {
         errorMessage = QString ("Fail to blank check FLASH. Invalid Response.");

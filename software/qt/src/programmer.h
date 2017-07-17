@@ -64,7 +64,7 @@ public:
     int readFlash (unsigned char *aDest, unsigned long aSize);
     int verifyFlash (const unsigned char *aSrc, unsigned long aSize);
     int writeFlash (const unsigned char *aSrc, unsigned long aSize);
-    int eraseFlash (void);
+    int eraseFlash (unsigned long aEraseTime);
     int blankCheck (unsigned long aBlankSize = 0);
 
     char baseSystemName[16];

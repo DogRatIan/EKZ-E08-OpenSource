@@ -431,13 +431,14 @@ void CWorker::doActionWrite (CProgrammer *aProgrammer)
 
     if (checkBoxValue)
     {
+        QString str;
+
         // Erase Device
-        emit logMessage (QString ("Erase started. Please wait for a moment."));
-        if (aProgrammer->eraseFlash () < 0)
+        str.sprintf ("Erase started. Max time is %ds.", currentFlashInfo->chipEraseTime);
+        emit logMessage (str);
+        if (aProgrammer->eraseFlash (currentFlashInfo->chipEraseTime) < 0)
             throw (aProgrammer->errorMessage);
-    }
-    else
-    {
+
         // Blank Check
         emit logMessage (QString ("Blank Check."));
         if (aProgrammer->blankCheck (currentFlashInfo->totalSizeKiB * 1024) < 0)
@@ -520,6 +521,7 @@ void CWorker::doActionVerify (CProgrammer *aProgrammer)
 //==========================================================================
 void CWorker::doActionErase (CProgrammer *aProgrammer)
 {
+    QString str;
     unsigned long flash_id;
 
     qDebug () << QString ("[DEBUG] doActionErase");
@@ -550,8 +552,9 @@ void CWorker::doActionErase (CProgrammer *aProgrammer)
     }
 
     // Erase Device
-    emit logMessage (QString ("Erase started. Please wait for a moment."));
-    if (aProgrammer->eraseFlash () < 0)
+    str.sprintf ("Erase started. Max time is %ds.", currentFlashInfo->chipEraseTime);
+    emit logMessage (str);
+    if (aProgrammer->eraseFlash (currentFlashInfo->chipEraseTime) < 0)
         throw (aProgrammer->errorMessage);
 
     // Blank Check

@@ -68,25 +68,26 @@ enum
 };
 
 // Command List (Common)
-#define CMD_GET_INFO        0x00
-#define CMD_ECHO            0xff
+#define CMD_GET_INFO            0x00
+#define CMD_ECHO                0xff
 
 // Command List (BaseSystem)
-#define CMD_CLR_UPROG       0x81
-#define CMD_LOAD_UPROG      0x82
-#define CMD_CHK_UPROG       0x83
-#define CMD_START_UPROG     0x84
+#define CMD_CLR_UPROG           0x81
+#define CMD_LOAD_UPROG          0x82
+#define CMD_CHK_UPROG           0x83
+#define CMD_START_UPROG         0x84
 
 // Command List (User Program)
-#define CMD_EXIT            0x01
-
-#define CMD_CHIP_INFO       0x02
-#define CMD_CHIP_ERASE      0x03
-#define CMD_READ_DATA       0x04
-#define CMD_WRITE_DATA      0x05
-#define CMD_READ_REG        0x06
-#define CMD_WRITE_REG       0x07
-#define CMD_BLANK_CHECK     0x08
+#define CMD_EXIT                0x01
+#define CMD_CHIP_INFO           0x02
+#define CMD_CHIP_ERASE          0x03
+#define CMD_READ_DATA           0x04
+#define CMD_WRITE_DATA          0x05
+#define CMD_READ_REG            0x06
+#define CMD_WRITE_REG           0x07
+#define CMD_BLANK_CHECK         0x08
+#define CMD_ENTER_4BYTE_ADDR    0x09
+#define CMD_EXIT_4BYTE_ADDR     0x0A
 
 //
 #define VALUE_CRC32_IV      0x5555aaaa
@@ -542,7 +543,6 @@ int CProgrammer::checkUserProgram (void)
     return 0;
 }
 
-
 //==========================================================================
 // Get Flash ID
 //==========================================================================
@@ -551,8 +551,10 @@ unsigned long CProgrammer::getFlashInfo (void)
     int rx_len;
     int tx_len;
     unsigned char *ptr;
+    unsigned long chip_id;
 
     // Get Info
+    chip_id = 0;
     memset (RxBuf, 0, sizeof (RxBuf));
     ptr = TxBuf;
     ptr += PackU8 (ptr, CMD_CHIP_INFO);
@@ -576,9 +578,78 @@ unsigned long CProgrammer::getFlashInfo (void)
 
     //
     errorMessage = QString ().sprintf ("[DEBUG]     SPI FLASH ID: %02X %02X %02d\n", RxBuf[2], RxBuf[3], RxBuf[4]);
+    chip_id = (((unsigned long)RxBuf[2] << 16) | ((unsigned long)RxBuf[3] << 8) | ((unsigned long)RxBuf[4] << 0));
 
-    return (((unsigned long)RxBuf[2] << 16) | ((unsigned long)RxBuf[3] << 8) | ((unsigned long)RxBuf[4] << 0));
+    return chip_id;
 }
+
+//==========================================================================
+// Read Status Register
+//==========================================================================
+int CProgrammer::readStatus (void)
+{
+    QString str;
+    int rx_len;
+    int tx_len;
+    unsigned char *ptr;
+
+    ptr = TxBuf;
+    ptr += PackU8 (ptr, CMD_READ_REG);
+    tx_len = ptr - TxBuf;
+    rx_len = sendCommand (TxBuf, tx_len, RxBuf, sizeof (RxBuf));
+    str.sprintf ("CMD_READ_REG, RxLen=%d", rx_len);
+    qDebug () << str;
+    str.sprintf (" %02X %02X %02X", RxBuf[0], RxBuf[1], RxBuf[2]);
+    qDebug () << str;
+
+    if (rx_len < 3)
+    {
+        errorMessage = QString ("Fail to write status register. Invalid Response.");
+        return -1;
+    }
+    if (RxBuf[1] != 1)
+    {
+        errorMessage = QString ("Unable to write status register.");
+        return -1;
+    }
+
+    return RxBuf[2];
+}
+
+//==========================================================================
+// Write Status Register
+//==========================================================================
+int CProgrammer::writeStatus (unsigned char aValue)
+{
+    QString str;
+    int rx_len;
+    int tx_len;
+    unsigned char *ptr;
+
+    ptr = TxBuf;
+    ptr += PackU8 (ptr, CMD_WRITE_REG);
+    ptr += PackU8 (ptr, aValue);
+    tx_len = ptr - TxBuf;
+    rx_len = sendCommand (TxBuf, tx_len, RxBuf, sizeof (RxBuf));
+    str.sprintf ("CMD_WRITE_REG, RxLen=%d", rx_len);
+    qDebug () << str;
+    str.sprintf (" %02X %02X %02X", RxBuf[0], RxBuf[1], RxBuf[2]);
+    qDebug () << str;
+
+    if (rx_len < 3)
+    {
+        errorMessage = QString ("Fail to write status register. Invalid Response.");
+        return -1;
+    }
+    if (RxBuf[1] != 1)
+    {
+        errorMessage = QString ("Unable to write status register.");
+        return -1;
+    }
+
+    return 0;
+}
+
 
 //==========================================================================
 // Read Chip
@@ -844,6 +915,59 @@ int CProgrammer::blankCheck (unsigned long aBlankSize)
     return 0;
 }
 
+//==========================================================================
+// Enter 4 byte address mode
+//==========================================================================
+int CProgrammer::enter4ByteAddrMode (void)
+{
+    int rx_len;
+    int tx_len;
+    unsigned char *ptr;
+
+    ptr = TxBuf;
+    ptr += PackU8 (ptr, CMD_ENTER_4BYTE_ADDR);
+    tx_len = ptr - TxBuf;
+    rx_len = sendCommand (TxBuf, tx_len, RxBuf, sizeof (RxBuf));
+    if (rx_len < 2)
+    {
+        errorMessage = QString ("Fail to enter 4-byte address mode. Invalid Response.");
+        return -1;
+    }
+    if (RxBuf[1] != 1)
+    {
+        errorMessage = QString ("Unable to enter 4-byte address mode.");
+        return -1;
+    }
+
+    return 0;
+}
+
+//==========================================================================
+// Exit 4 byte address mode
+//==========================================================================
+int CProgrammer::exit4ByteAddrMode (void)
+{
+    int rx_len;
+    int tx_len;
+    unsigned char *ptr;
+
+    ptr = TxBuf;
+    ptr += PackU8 (ptr, CMD_EXIT_4BYTE_ADDR);
+    tx_len = ptr - TxBuf;
+    rx_len = sendCommand (TxBuf, tx_len, RxBuf, sizeof (RxBuf));
+    if (rx_len < 2)
+    {
+        errorMessage = QString ("Fail to exit 4-byte address mode. Invalid Response.");
+        return -1;
+    }
+    if (RxBuf[1] != 1)
+    {
+        errorMessage = QString ("Unable to exit 4-byte address mode.");
+        return -1;
+    }
+
+    return 0;
+}
 
 //==========================================================================
 //==========================================================================

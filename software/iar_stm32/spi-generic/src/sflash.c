@@ -6,6 +6,18 @@
 #include "sflash.h"
 
 //==========================================================================
+//==========================================================================
+static int g4ByteAddr;
+
+//==========================================================================
+// Initialize
+//==========================================================================
+void SflashInit (void)
+{
+    g4ByteAddr = 0;
+}
+
+//==========================================================================
 // Get Manufacturer ID and Device ID
 //==========================================================================
 unsigned long SflashReadId (void)
@@ -155,9 +167,19 @@ void SflashSectorErase (unsigned long aAddr)
 {
     SpiSetCs (0);
     SpiByte (0x20);
-    SpiByte (aAddr >> 16);
-    SpiByte (aAddr >> 8);
-    SpiByte (aAddr >> 0);
+    if (g4ByteAddr)
+    {
+        SpiByte (aAddr >> 24);
+        SpiByte (aAddr >> 16);
+        SpiByte (aAddr >> 8);
+        SpiByte (aAddr >> 0);
+    }
+    else
+    {
+        SpiByte (aAddr >> 16);
+        SpiByte (aAddr >> 8);
+        SpiByte (aAddr >> 0);
+    }
     SpiSetCs (1);
 
 }
@@ -175,9 +197,19 @@ void SflashWritePage (unsigned long aAddr, const unsigned char *aSrc)
     //
     SpiSetCs (0);
     SpiByte (0x02);
-    SpiByte (aAddr >> 16);
-    SpiByte (aAddr >> 8);
-    SpiByte (aAddr >> 0);
+    if (g4ByteAddr)
+    {
+        SpiByte (aAddr >> 24);
+        SpiByte (aAddr >> 16);
+        SpiByte (aAddr >> 8);
+        SpiByte (aAddr >> 0);
+    }
+    else
+    {
+        SpiByte (aAddr >> 16);
+        SpiByte (aAddr >> 8);
+        SpiByte (aAddr >> 0);
+    }
     for (i = 256; i; i--)
     {
         SpiByte (*aSrc);
@@ -199,9 +231,19 @@ void SflashReadPage (unsigned long aAddr, unsigned char *aDest)
     //
     SpiSetCs (0);
     SpiByte (0x03);
-    SpiByte (aAddr >> 16);
-    SpiByte (aAddr >> 8);
-    SpiByte (aAddr >> 0);
+    if (g4ByteAddr)
+    {
+        SpiByte (aAddr >> 24);
+        SpiByte (aAddr >> 16);
+        SpiByte (aAddr >> 8);
+        SpiByte (aAddr >> 0);
+    }
+    else
+    {
+        SpiByte (aAddr >> 16);
+        SpiByte (aAddr >> 8);
+        SpiByte (aAddr >> 0);
+    }
     for (i = 256; i; i--)
     {
         *aDest = SpiByte (0xff);
@@ -223,6 +265,20 @@ void SflashReadPage (unsigned long aAddr, unsigned char *aDest)
 //    SpiByte (aAddr >> 0);
 //
 //}
+
+//==========================================================================
+// Enter/Exit 4-Byte Address Mode
+//==========================================================================
+void Sflash4ByteAddrMode (int aEnable)
+{
+    SpiSetCs (0);
+    if (aEnable)
+        SpiByte (0xb7);
+    else
+        SpiByte (0xe9);
+    SpiSetCs (1);
+}
+
 
 //==========================================================================
 // Reset

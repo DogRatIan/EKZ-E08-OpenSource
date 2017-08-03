@@ -17,6 +17,7 @@ void SflashChipErase ();
 void SflashSectorErase (unsigned long aAddr);
 void SflashWritePage (unsigned long aAddr, const unsigned char *aSrc);
 void SflashReadPage (unsigned long aAddr, unsigned char *aDest);
+void Sflash4ByteAddrMode (int aEnable);
 void SflashReset (void);
 
 //==========================================================================

@@ -13,17 +13,19 @@
 //==========================================================================
 // Defines
 //==========================================================================
-#define CMD_GET_INFO        0x00
-#define CMD_ECHO            0xff
-#define RESP_ERROR          0x80
-#define CMD_EXIT            0x01
-#define CMD_CHIP_INFO       0x02
-#define CMD_CHIP_ERASE      0x03
-#define CMD_READ_DATA       0x04
-#define CMD_WRITE_DATA      0x05
-#define CMD_READ_REG        0x06
-#define CMD_WRITE_REG       0x07
-#define CMD_BLANK_CHECK     0x08
+#define CMD_GET_INFO            0x00
+#define CMD_ECHO                0xff
+#define RESP_ERROR              0x80
+#define CMD_EXIT                0x01
+#define CMD_CHIP_INFO           0x02
+#define CMD_CHIP_ERASE          0x03
+#define CMD_READ_DATA           0x04
+#define CMD_WRITE_DATA          0x05
+#define CMD_READ_REG            0x06
+#define CMD_WRITE_REG           0x07
+#define CMD_BLANK_CHECK         0x08
+#define CMD_ENTER_4BYTE_ADDR    0x09
+#define CMD_EXIT_4BYTE_ADDR     0x0A
 
 #define TIMEOUT_DEFAULT     1000
 #define TIMEOUT_ERASE       60000
@@ -431,6 +433,133 @@ static void DoCmdBlankCheck (int aLen)
 }
 
 //==========================================================================
+// Do Read Status Reg - CMD_READ_REG
+//==========================================================================
+static void DoCmdReadStatus (int aLen)
+{
+    unsigned char ret = 0;
+    unsigned char status1;
+    unsigned short status2;
+
+    //
+    if ((aLen == 2) && (gBuf[1] == 2))
+    {
+        // Read 2 bytes status
+        if (WaitSflashReady (TIMEOUT_DEFAULT) < 0)
+            status2 = 0xffff;
+        else
+        {
+            status2 = SflashReadStatus2 ();
+            ret = 1;
+        }
+
+        //
+        gBuf[0] = CMD_READ_REG;
+        gBuf[1] = ret;
+        gBuf[2] = (status2 >> 8);
+        gBuf[3] = (status2 >> 0);
+        sys_link_write (gBuf, 4);
+    }
+    else
+    {
+        // Read 1 byte status
+        if (WaitSflashReady (TIMEOUT_DEFAULT) < 0)
+            status1 = 0xff;
+        else
+        {
+            status1 = SflashReadStatus1 ();
+            ret = 1;
+        }
+
+        //
+        gBuf[0] = CMD_READ_REG;
+        gBuf[1] = ret;
+        gBuf[2] = status1;
+        sys_link_write (gBuf, 3);
+    }
+}
+
+//==========================================================================
+// Do Write Status Reg - CMD_WRITE_REG
+//==========================================================================
+static void DoCmdWriteStatus (int aLen)
+{
+    unsigned char status;
+    unsigned char ret;
+
+    //
+    status = 0xff;
+    ret = 0;
+
+    // Get Addr
+    if (aLen  == 2)
+    {
+        if (WaitSflashReady (TIMEOUT_DEFAULT) >= 0)
+        {
+            SflashWriteEnable ();
+            SflashWriteStatus1 (gBuf[1]);
+            status = SflashReadStatus1 ();
+            ret = 1;
+        }
+    }
+
+    //
+    gBuf[0] = CMD_WRITE_REG;
+    gBuf[1] = ret;
+    gBuf[2] = status;
+
+    sys_link_write (gBuf, 3);
+}
+
+//==========================================================================
+// Do Enter 4-Byte Addr Mode - CMD_ENTER_4BYTE_ADDR
+//==========================================================================
+static void DoEnter4ByteAddrMode (int aLen)
+{
+    unsigned char ret;
+
+    if (WaitSflashReady (TIMEOUT_DEFAULT) < 0)
+    {
+        ret = 0;
+    }
+    else
+    {
+        Sflash4ByteAddrMode (true);
+        ret = 1;
+    }
+
+    //
+    gBuf[0] = CMD_WRITE_REG;
+    gBuf[1] = ret;
+
+    sys_link_write (gBuf, 2);
+}
+
+//==========================================================================
+// Do Exit 4-Byte Addr Mode - CMD_ENTER_4BYTE_ADDR
+//==========================================================================
+static void DoExit4ByteAddrMode (int aLen)
+{
+    unsigned char ret;
+
+    if (WaitSflashReady (TIMEOUT_DEFAULT) < 0)
+    {
+        ret = 0;
+    }
+    else
+    {
+        Sflash4ByteAddrMode (false);
+        ret = 1;
+    }
+
+    //
+    gBuf[0] = CMD_WRITE_REG;
+    gBuf[1] = ret;
+
+    sys_link_write (gBuf, 2);
+}
+
+//==========================================================================
 // Main Entry Point
 //==========================================================================
 void main()
@@ -443,6 +572,7 @@ void main()
     //
     IoInit ();
     SpiInit ();
+    SflashInit ();
 
     //
     version = sys_version ();
@@ -513,13 +643,23 @@ void main()
                     break;
 
                 case CMD_READ_REG:
+                    DoCmdReadStatus (i);
                     break;
 
                 case CMD_WRITE_REG:
+                    DoCmdWriteStatus (i);
                     break;
 
                 case CMD_BLANK_CHECK:
                     DoCmdBlankCheck (i);
+                    break;
+
+                case CMD_ENTER_4BYTE_ADDR:
+                    DoEnter4ByteAddrMode (i);
+                    break;
+
+                case CMD_EXIT_4BYTE_ADDR:
+                    DoExit4ByteAddrMode (i);
                     break;
 
             }

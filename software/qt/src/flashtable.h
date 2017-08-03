@@ -41,12 +41,8 @@ struct TFlashInfo
     const char *brand;
     unsigned long id;
     const char *partNumber;
-    int sectorSize;
-    int numOfSector;
-    int pageSize;
     int totalSizeKiB;
     unsigned long chipEraseTime;
-    double voltage;
     const char *imageFile;
 };
 

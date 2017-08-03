@@ -379,6 +379,17 @@ void CWorker::doActionRead (CProgrammer *aProgrammer)
         throw (QString ("Device ID not match."));
     }
 
+    // Enter 4-Byte Address Mode if > 16MiB
+    if (currentFlashInfo->totalSizeKiB > 16384)
+    {
+        if (aProgrammer->enter4ByteAddrMode() < 0)
+        {
+            emit logMessage ("Fail to enter 4-Byte Address Mode.");
+            throw (aProgrammer->errorMessage);
+        }
+        emit logMessage ("4-Byte Address Mode Entered.");
+    }
+
     // Read data
     emit logMessage (QString ().sprintf ("Reading %d KiB...", currentFlashInfo->totalSizeKiB));
     if (aProgrammer->readFlash(dataBuffer, dataBufferSize) < 0)
@@ -429,12 +440,23 @@ void CWorker::doActionWrite (CProgrammer *aProgrammer)
         throw (QString ("Device ID not match."));
     }
 
+    // Enter 4-Byte Address Mode if > 16MiB
+    if (currentFlashInfo->totalSizeKiB > 16384)
+    {
+        if (aProgrammer->enter4ByteAddrMode() < 0)
+        {
+            emit logMessage ("Fail to enter 4-Byte Address Mode.");
+            throw (aProgrammer->errorMessage);
+        }
+        emit logMessage ("4-Byte Address Mode Entered.");
+    }
+
     if (checkBoxValue)
     {
         QString str;
 
         // Erase Device
-        str.sprintf ("Erase started. Max time is %ds.", currentFlashInfo->chipEraseTime);
+        str.sprintf ("Erase started. Max time is %lds.", currentFlashInfo->chipEraseTime);
         emit logMessage (str);
         if (aProgrammer->eraseFlash (currentFlashInfo->chipEraseTime) < 0)
             throw (aProgrammer->errorMessage);
@@ -500,6 +522,17 @@ void CWorker::doActionVerify (CProgrammer *aProgrammer)
         throw (QString ("Device ID not match."));
     }
 
+    // Enter 4-Byte Address Mode if > 16MiB
+    if (currentFlashInfo->totalSizeKiB > 16384)
+    {
+        if (aProgrammer->enter4ByteAddrMode() < 0)
+        {
+            emit logMessage ("Fail to enter 4-Byte Address Mode.");
+            throw (aProgrammer->errorMessage);
+        }
+        emit logMessage ("4-Byte Address Mode Entered.");
+    }
+
     // Verify data
     emit logMessage (QString ().sprintf ("Verify %ld bytes...", dataBufferSize));
     if (aProgrammer->verifyFlash (dataBuffer, dataBufferSize) < 0)
@@ -552,7 +585,7 @@ void CWorker::doActionErase (CProgrammer *aProgrammer)
     }
 
     // Erase Device
-    str.sprintf ("Erase started. Max time is %ds.", currentFlashInfo->chipEraseTime);
+    str.sprintf ("Erase started. Max time is %lds.", currentFlashInfo->chipEraseTime);
     emit logMessage (str);
     if (aProgrammer->eraseFlash (currentFlashInfo->chipEraseTime) < 0)
         throw (aProgrammer->errorMessage);
@@ -579,6 +612,7 @@ void CWorker::doActionErase (CProgrammer *aProgrammer)
 void CWorker::doActionDetect (CProgrammer *aProgrammer)
 {
     unsigned long flash_id;
+    int status;
 
     qDebug () << QString ("[DEBUG] doActionDetect");
 
@@ -594,6 +628,14 @@ void CWorker::doActionDetect (CProgrammer *aProgrammer)
         throw (aProgrammer->errorMessage);
 
     emit logMessage (QString ().sprintf ("Device found. ID: %06lX.", flash_id));
+
+    // Read status register
+    status = aProgrammer->readStatus ();
+    if (status < 0)
+        throw (aProgrammer->errorMessage);
+
+    emit logMessage (QString ().sprintf ("Status register: %02X.", status));
+
 
     currentFlashInfo = GetFlashTable()->getSerialFlash (flash_id);
     if (currentFlashInfo != NULL)

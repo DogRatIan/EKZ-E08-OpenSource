@@ -61,11 +61,17 @@ public:
     int checkUserProgram (void);
 
     unsigned long getFlashInfo (void);
+    int readStatus (void);
+    int writeStatus (unsigned char aValue);
     int readFlash (unsigned char *aDest, unsigned long aSize);
     int verifyFlash (const unsigned char *aSrc, unsigned long aSize);
     int writeFlash (const unsigned char *aSrc, unsigned long aSize);
     int eraseFlash (unsigned long aEraseTime);
     int blankCheck (unsigned long aBlankSize = 0);
+
+    int enter4ByteAddrMode (void);
+    int exit4ByteAddrMode (void);
+
 
     char baseSystemName[16];
     unsigned short baseSystemVersion;

@@ -94,7 +94,7 @@ private:
     Ui::CMainWindow *ui;
 
     CModelDataBuffer ModelDataBuffer;
-    const struct TFlashInfo *currentFlash;
+    struct TFlashInfo currentFlash;
     struct TProgrammerInfo programmerInfo;
 
     QString lastDataPath;

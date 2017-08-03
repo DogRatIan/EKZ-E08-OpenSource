@@ -38,12 +38,12 @@
 //==========================================================================
 struct TFlashInfo
 {
-    const char *brand;
+    char brand[64];
     unsigned long id;
-    const char *partNumber;
+    char partNumber[64];
     int totalSizeKiB;
-    unsigned long chipEraseTime;
-    const char *imageFile;
+    int chipEraseTime;
+    char imageFile[128];
 };
 
 //==========================================================================
@@ -54,14 +54,19 @@ public:
     CFlashTable();
     ~CFlashTable();
 
+    void generateBrandList (void);
     void generateSerialFlashList (const char *aBrand);
-    const struct TFlashInfo *getSerialFlash (const char *aBrand, const char *aPartNumber);
-    const struct TFlashInfo *getSerialFlash (unsigned long aId);
+    int getSerialFlash(struct TFlashInfo *aInfo, const char *aBrand, const char *aPartNumber);
+    int getSerialFlash (struct TFlashInfo *aInfo, unsigned long aId);
     unsigned long getMaximumSize (void);
+
+    const char *loadFromFile(void);
+    const char *saveDefaultTable(void);
 
     std::set<std::string> serialFlashBrand;
     std::set<std::string> serialFlashList;
 
+    std::list <struct TFlashInfo> deviceTable;
 
 private:
 };

@@ -42,6 +42,8 @@ CDialogDoAction::CDialogDoAction (QWidget *aParent, int aAction) :
     worker (aParent),
     action (aAction)
 {
+    QString str;
+
     // Load UI
     ui->setupUi (this);
 
@@ -107,6 +109,14 @@ CDialogDoAction::CDialogDoAction (QWidget *aParent, int aAction) :
     connect (&worker, &CWorker::finished, this, &CDialogDoAction::handleWorkerFinished);
     connect (&worker, &CWorker::logMessage, this, &CDialogDoAction::handleWorkerLogMessage);
     connect (&worker, &CWorker::updateProgress, this, &CDialogDoAction::handleUpdateProgress);
+
+    //
+    if (action == DOACTIONDIALOG_DETECT)
+    {
+        str.sprintf ("%d devices found at table.", GetFlashTable()->deviceTable.size ());
+        ui->listLog->addItem (str);
+        ui->listLog->setCurrentRow(ui->listLog->count() - 1);
+    }
 }
 
 //==========================================================================

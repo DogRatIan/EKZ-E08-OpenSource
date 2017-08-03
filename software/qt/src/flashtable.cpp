@@ -26,14 +26,21 @@
 //       Local Variable : All lower case
 //==========================================================================
 #include <QDebug>
+#include <QFileInfo>
+#include <QApplication>
+#include <QDir>
 #include <string.h>
 
+#include "json/json.h"
 #include "flashtable.h"
 
 //==========================================================================
 //==========================================================================
-#define IMAGEFILE_GENERAL_SFLASH     "spi-generic.ekz"
-#define IMAGEFILE_SST_SFLASH         "spi-sst.ekz"
+#define IMAGEFILE_GENERAL_SFLASH    "spi-generic.ekz"
+#define IMAGEFILE_SST_SFLASH        "spi-sst.ekz"
+
+#define FLASHTABLE_FILENAME         "ekz-flashtable.json"
+
 
 #define DEFAULT_ERASE_TIME      60
 
@@ -56,7 +63,7 @@ const struct TFlashInfo KGenericSpiFlash64KiB = {"Generic", 0x000000, "GENERIC",
 
 //   brand          id          partNumber              totalSizeKiB
 //                                                             chipEraseTime
-static const struct TFlashInfo KSerialFlashTable[] = {
+static const struct TFlashInfo KDefaultFlashTable[] = {
     {"MXIC",        0xC22010,   "MX25L512",             64,    DEFAULT_ERASE_TIME, IMAGEFILE_GENERAL_SFLASH},
     {"MXIC",        0xC22011,   "MX25L1005",            128,   DEFAULT_ERASE_TIME, IMAGEFILE_GENERAL_SFLASH},
     {"MXIC",        0xC22012,   "MX25L2005",            256,   DEFAULT_ERASE_TIME, IMAGEFILE_GENERAL_SFLASH},
@@ -111,39 +118,14 @@ static const struct TFlashInfo KSerialFlashTable[] = {
     {"SST",         0xBF2541,   "SST25VF016B",          2048,  DEFAULT_ERASE_TIME, IMAGEFILE_SST_SFLASH},
     {"SST",         0xBF254A,   "SST25VF032B",          4096,  DEFAULT_ERASE_TIME, IMAGEFILE_SST_SFLASH},
     {"China",       0xC86017,   "25L064",               8192,  DEFAULT_ERASE_TIME, IMAGEFILE_GENERAL_SFLASH},
-    {NULL,          0,          NULL,                   0,     0,   NULL}};
+    {"",            0,          "",                     0,     0,   ""}};
 
 //==========================================================================
 // Constructor
 //==========================================================================
 CFlashTable::CFlashTable()
 {
-    const struct TFlashInfo *info;
-    std::set<std::string>::iterator it;
-
-    // Make sure the set is empty
-    serialFlashBrand.clear ();
-    serialFlashList.clear ();
-
-    // Create Serial Flash Brand List
-    info = &KSerialFlashTable[0];
-    while (info->id)
-    {
-        it = serialFlashBrand.find (info->brand);
-        if (it == serialFlashBrand.end ())
-        {
-            serialFlashBrand.insert (info->brand);
-        }
-        info ++;
-    }
-
-    if (DEBUG)
-    {
-        for (it = serialFlashBrand.begin(); it != serialFlashBrand.end(); ++it)
-        {
-            qDebug () << QString ().sprintf ("[DEBUG] %s", it->c_str ());
-        }
-    }
+    deviceTable.clear();
 }
 
 //==========================================================================
@@ -152,6 +134,48 @@ CFlashTable::CFlashTable()
 CFlashTable::~CFlashTable()
 {
     serialFlashBrand.clear ();
+    deviceTable.clear();
+}
+
+//==========================================================================
+// Generate Serial Flash Brand List
+//==========================================================================
+void CFlashTable::generateBrandList (void)
+{
+//    const struct TFlashInfo *info;
+    std::set<std::string>::iterator it_brand;
+
+    // Make sure the set is empty
+    serialFlashBrand.clear ();
+    serialFlashList.clear ();
+
+    // Create Serial Flash Brand List
+    for (std::list<struct TFlashInfo>::iterator info = deviceTable.begin(); info != deviceTable.end(); ++info)
+    {
+        it_brand = serialFlashBrand.find (info->brand);
+        if (it_brand == serialFlashBrand.end ())
+        {
+            serialFlashBrand.insert (info->brand);
+        }
+    }
+
+//    info = &KSerialFlashTable[0];
+//    while (info->id)
+//    {
+//        it = serialFlashBrand.find (info->brand);
+//        if (it == serialFlashBrand.end ())
+//        {
+//            serialFlashBrand.insert (info->brand);
+//        }
+//        info ++;
+//    }
+//    if (DEBUG)
+//    {
+//        for (it = serialFlashBrand.begin(); it != serialFlashBrand.end(); ++it)
+//        {
+//            qDebug () << QString ().sprintf ("[DEBUG] %s", it->c_str ());
+//        }
+//    }
 }
 
 //==========================================================================
@@ -159,15 +183,16 @@ CFlashTable::~CFlashTable()
 //==========================================================================
 void CFlashTable::generateSerialFlashList (const char *aBrand)
 {
-    const struct TFlashInfo *info;
+//    const struct TFlashInfo *info;
     std::set<std::string>::iterator it;
 
     // Clear old list
     serialFlashList.clear();
 
     // Create Serial Flash Brand List
-    info = &KSerialFlashTable[0];
-    while (info->id)
+//    info = &KSerialFlashTable[0];
+//    while (info->id)
+    for (std::list<struct TFlashInfo>::iterator info = deviceTable.begin(); info != deviceTable.end(); ++info)
     {
         if (strcmp (info->brand, aBrand) == 0)
         {
@@ -177,7 +202,7 @@ void CFlashTable::generateSerialFlashList (const char *aBrand)
                 serialFlashList.insert (info->partNumber);
             }
         }
-        info ++;
+//        info ++;
     }
 
     if (DEBUG)
@@ -192,43 +217,57 @@ void CFlashTable::generateSerialFlashList (const char *aBrand)
 //==========================================================================
 // Get Serial Flash Info (by Brand and Part Number)
 //==========================================================================
-const struct TFlashInfo *CFlashTable::getSerialFlash (const char *aBrand, const char *aPartNumber)
+int CFlashTable::getSerialFlash (struct TFlashInfo *aInfo, const char *aBrand, const char *aPartNumber)
 {
-    const struct TFlashInfo *info;
+//    const struct TFlashInfo *info;
 
     // Create Serial Flash Brand List
-    info = &KSerialFlashTable[0];
-    while (info->id)
+//    info = &KSerialFlashTable[0];
+//    while (info->id)
+    for (std::list<struct TFlashInfo>::iterator info = deviceTable.begin(); info != deviceTable.end(); ++info)
     {
         if ((qstrcmp (info->brand, aBrand) == 0) && (qstrcmp (info->partNumber, aPartNumber) == 0))
         {
-            return info;
+            qstrncpy (aInfo->brand, info->brand, sizeof (aInfo->brand));
+            qstrncpy (aInfo->partNumber, info->partNumber, sizeof (aInfo->partNumber));
+            qstrncpy (aInfo->imageFile, info->imageFile, sizeof (aInfo->imageFile));
+            aInfo->id = info->id;
+            aInfo->totalSizeKiB = info->totalSizeKiB;
+            aInfo->chipEraseTime = info->chipEraseTime;
+            return 0;
         }
-        info ++;
+//        info ++;
     }
 
-    return NULL;
+    return -1;
 }
 
 //==========================================================================
 // Get Serial Flash Info (by ID)
 //==========================================================================
-const struct TFlashInfo *CFlashTable::getSerialFlash (unsigned long aId)
+int CFlashTable::getSerialFlash (struct TFlashInfo *aInfo, unsigned long aId)
 {
-    const struct TFlashInfo *info;
+//    const struct TFlashInfo *info;
 
     // Create Serial Flash Brand List
-    info = &KSerialFlashTable[0];
-    while (info->id)
+//    info = &KSerialFlashTable[0];
+//    while (info->id)
+    for (std::list<struct TFlashInfo>::iterator info = deviceTable.begin(); info != deviceTable.end(); ++info)
     {
         if (info->id == aId)
         {
-            return info;
+            qstrncpy (aInfo->brand, info->brand, sizeof (aInfo->brand));
+            qstrncpy (aInfo->partNumber, info->partNumber, sizeof (aInfo->partNumber));
+            qstrncpy (aInfo->imageFile, info->imageFile, sizeof (aInfo->imageFile));
+            aInfo->id = info->id;
+            aInfo->totalSizeKiB = info->totalSizeKiB;
+            aInfo->chipEraseTime = info->chipEraseTime;
+            return 0;
         }
-        info ++;
+//        info ++;
     }
 
-    return NULL;
+    return -1;
 }
 
 
@@ -238,11 +277,12 @@ const struct TFlashInfo *CFlashTable::getSerialFlash (unsigned long aId)
 unsigned long CFlashTable::getMaximumSize (void)
 {
     int max_size_kib;
-    const struct TFlashInfo *info;
+//    const struct TFlashInfo *info;
 
     max_size_kib = 0;
-    info = &KSerialFlashTable[0];
-    while (info->id)
+//    info = &KSerialFlashTable[0];
+//    while (info->id)
+    for (std::list<struct TFlashInfo>::iterator info = deviceTable.begin(); info != deviceTable.end(); ++info)
     {
         if (info->totalSizeKiB > max_size_kib)
             max_size_kib = info->totalSizeKiB;
@@ -250,4 +290,150 @@ unsigned long CFlashTable::getMaximumSize (void)
     }
 
     return ((unsigned long)max_size_kib * 1024);
+}
+
+//==========================================================================
+// Load Flash Table from file
+//==========================================================================
+const char *CFlashTable::loadFromFile (void)
+{
+    QFileInfo flash_table_file (QApplication::applicationDirPath().append(QDir::separator()).append(FLASHTABLE_FILENAME));
+    deviceTable.clear ();
+
+    if (flash_table_file.size() > 0)
+    {
+        int line_count;
+        QString line;
+        int idx;
+        Json::Value j_root;
+        Json::Value j_item;
+        Json::Reader j_reader;
+        std::string j_str;
+        char buf[64];
+        bool ok;
+        QString str;
+
+        qDebug () << FLASHTABLE_FILENAME << " found.";
+        qDebug () << "size=" << flash_table_file.size();
+
+        j_str = "";
+        QFile file (flash_table_file.absoluteFilePath());
+        if (file.open(QIODevice::ReadOnly | QIODevice::Text))
+        {
+            line_count = 0;
+            QTextStream in_stream (&file);
+            line = in_stream.readLine();
+            while (!line.isNull())
+            {
+                j_str.append (line.toUtf8().data());
+                line_count ++;
+                line = in_stream.readLine();
+            }
+            file.close();
+            qDebug () << "number of line=" << line_count;
+            qDebug () << "j_str len=" << j_str.length();
+
+            if (j_reader.parse (j_str, j_root))
+            {
+                struct TFlashInfo info;
+
+                idx = 0;
+                while (1)
+                {
+                    j_item = j_root[idx];
+                    if (j_item.isNull())
+                        break;
+                    idx ++;
+
+                    memset (&info, 0, sizeof (info));
+                    qstrncpy (info.brand, j_item.get ("brand", "").asCString(), sizeof (info.brand));
+                    qstrncpy (info.partNumber, j_item.get ("partNumber", "").asCString(), sizeof (info.brand));
+                    qstrncpy (info.imageFile, j_item.get ("imageFile", "").asCString(), sizeof (info.brand));
+                    info.chipEraseTime = j_item.get ("chipEraseTime", DEFAULT_ERASE_TIME).asInt();
+                    info.totalSizeKiB = j_item.get ("totalSizeKiB", 64).asInt();
+                    qstrncpy (buf, j_item.get ("id", "").asCString(), sizeof (buf));
+
+                    if (memcmp (buf, "0x", 2) == 0)
+                    {
+                        str = &buf[2];
+                        info.id = str.toInt(&ok, 16);
+                        if (!ok)
+                            info.id = 0;
+                    }
+
+                    deviceTable.push_back (info);
+                }
+                qDebug () << idx << " device loaded.";
+                return NULL;
+            }
+            else
+            {
+                return "Invalid FLASH table contents.";
+            }
+        }
+        else
+        {
+            return "Unable to load " FLASHTABLE_FILENAME;
+        }
+
+
+        return (FLASHTABLE_FILENAME " found.");
+    }
+    else
+    {
+        qDebug () << FLASHTABLE_FILENAME << " not found.";
+        return saveDefaultTable ();
+    }
+}
+
+
+//==========================================================================
+// Save Default FLASH Table to file
+//==========================================================================
+const char *CFlashTable::saveDefaultTable (void)
+{
+    QFileInfo flash_table_file (QApplication::applicationDirPath().append(QDir::separator()).append(FLASHTABLE_FILENAME));
+
+    const struct TFlashInfo *curr_flash;
+    struct TFlashInfo info;
+    Json::Value j_root;
+    Json::StyledWriter j_writer;
+    std::string j_str;
+    QString str;
+
+    int idx;
+
+    idx = 0;
+    curr_flash = KDefaultFlashTable;
+    while (curr_flash->id > 0)
+    {
+        j_root[idx]["brand"] = curr_flash->brand;
+        str.sprintf ("0x%06lX", curr_flash->id);
+        j_root[idx]["id"] = str.toUtf8().data();
+        j_root[idx]["partNumber"] = curr_flash->partNumber;
+        j_root[idx]["totalSizeKiB"] = curr_flash->totalSizeKiB;
+        j_root[idx]["chipEraseTime"] = curr_flash->chipEraseTime;
+        j_root[idx]["imageFile"] = curr_flash->imageFile;
+
+        memcpy (&info, curr_flash, sizeof (info));
+        deviceTable.push_back (info);
+
+        idx ++;
+        curr_flash ++;
+    }
+
+    j_str = j_writer.write(j_root);
+
+    QFile file (flash_table_file.absoluteFilePath());
+    if (file.open (QIODevice::WriteOnly | QIODevice::Truncate))
+    {
+        file.write (j_str.c_str());
+        file.close ();
+
+        qDebug () << FLASHTABLE_FILENAME << " created.";
+
+        return (FLASHTABLE_FILENAME " created.");
+    }
+    else
+        return ("Unable to create " FLASHTABLE_FILENAME ".");
 }

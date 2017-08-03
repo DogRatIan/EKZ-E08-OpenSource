@@ -529,7 +529,7 @@ static void DoEnter4ByteAddrMode (int aLen)
     }
 
     //
-    gBuf[0] = CMD_WRITE_REG;
+    gBuf[0] = CMD_ENTER_4BYTE_ADDR;
     gBuf[1] = ret;
 
     sys_link_write (gBuf, 2);
@@ -553,7 +553,7 @@ static void DoExit4ByteAddrMode (int aLen)
     }
 
     //
-    gBuf[0] = CMD_WRITE_REG;
+    gBuf[0] = CMD_EXIT_4BYTE_ADDR;
     gBuf[1] = ret;
 
     sys_link_write (gBuf, 2);

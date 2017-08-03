@@ -67,7 +67,7 @@ private:
     bool comboBrandReady;
     bool comboDeviceReady;
 
-    const struct TFlashInfo *selectedFlash;
+    struct TFlashInfo selectedFlash;
 
     void updateFlashInfo (void);
 };

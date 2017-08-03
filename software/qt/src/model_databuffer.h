@@ -36,9 +36,11 @@ class CModelDataBuffer : public QAbstractTableModel
 {
     Q_OBJECT
 public:
-    explicit CModelDataBuffer (QObject *aParent, unsigned long aMaxDataSize);
+    explicit CModelDataBuffer (QObject *aParent);
     ~CModelDataBuffer ();
-    
+
+    void setMaxDataSize (unsigned long aMaxDataSize);
+
     int rowCount (const QModelIndex &aParent = QModelIndex()) const ;
     int columnCount (const QModelIndex &aParent = QModelIndex()) const;
     QVariant data (const QModelIndex &aIndex, int aRole = Qt::DisplayRole) const;

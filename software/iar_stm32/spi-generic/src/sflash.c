@@ -192,7 +192,7 @@ void SflashWritePage (unsigned long aAddr, const unsigned char *aSrc)
     int i;
 
     // Align address to page
-    aAddr &= 0xffff00;
+    aAddr &= 0xffffff00;
 
     //
     SpiSetCs (0);
@@ -226,7 +226,7 @@ void SflashReadPage (unsigned long aAddr, unsigned char *aDest)
     int i;
 
     // Align address to page
-    aAddr &= 0xffff00;
+    aAddr &= 0xffffff00;
 
     //
     SpiSetCs (0);
@@ -273,9 +273,15 @@ void Sflash4ByteAddrMode (int aEnable)
 {
     SpiSetCs (0);
     if (aEnable)
+    {
         SpiByte (0xb7);
+        g4ByteAddr = 1;
+    }
     else
+    {
         SpiByte (0xe9);
+        g4ByteAddr = 0;
+    }
     SpiSetCs (1);
 }
 

@@ -35,12 +35,14 @@
 //==========================================================================
 CDialogSelectDevice::CDialogSelectDevice (QWidget *parent) :
     QDialog(parent),
-    ui(new Ui::CDialogSelectDevice),
-    selectedFlash (NULL)
+    ui(new Ui::CDialogSelectDevice)
 {
     int i;
     CFlashTable *flash_table = GetFlashTable ();
     std::set<std::string>::iterator it;
+
+    //
+    memset (&selectedFlash, 0, sizeof (selectedFlash));
 
     // Load UI
     ui->setupUi (this);
@@ -49,6 +51,9 @@ CDialogSelectDevice::CDialogSelectDevice (QWidget *parent) :
     Qt::WindowFlags flags = windowFlags ();
     flags &= (~(Qt::WindowCloseButtonHint | Qt::WindowContextHelpButtonHint | Qt::WindowMinimizeButtonHint | Qt::WindowMaximizeButtonHint));
     setWindowFlags (flags);
+
+    //
+    GetFlashTable()->generateBrandList();
 
     // Setup combo Brand List
     ui->comboBrand->clear ();
@@ -63,7 +68,6 @@ CDialogSelectDevice::CDialogSelectDevice (QWidget *parent) :
     }
     ui->comboBrand->setCurrentIndex (-1);
     comboBrandReady = true;
-    selectedFlash = NULL;
     updateFlashInfo ();
 
     // Set to fixed size
@@ -118,7 +122,7 @@ void CDialogSelectDevice::setFlashInfo (const struct TFlashInfo *aInfo)
 //==========================================================================
 void CDialogSelectDevice::updateFlashInfo (void)
 {
-    if (selectedFlash == NULL)
+    if (selectedFlash.id == 0)
     {
         ui->labelDeviceId->setText ("-");
         ui->labelDeviceSize->setText ("-");
@@ -127,10 +131,11 @@ void CDialogSelectDevice::updateFlashInfo (void)
     {
         QString str;
 
-        str.sprintf ("%02lX %02lX %02lX", ((selectedFlash->id >> 16) & 0xff), ((selectedFlash->id >> 8) & 0xff), ((selectedFlash->id >> 0) & 0xff));
+        str.sprintf ("%02lX %02lX %02lX", ((selectedFlash.id >> 16) & 0xff), ((selectedFlash.id >> 8) & 0xff),
+                     ((selectedFlash.id >> 0) & 0xff));
         ui->labelDeviceId->setText (str);
 
-        str.sprintf ("%d KiB", selectedFlash->totalSizeKiB);
+        str.sprintf ("%d KiB", selectedFlash.totalSizeKiB);
         ui->labelDeviceSize->setText (str);
     }
 }
@@ -140,7 +145,7 @@ void CDialogSelectDevice::updateFlashInfo (void)
 //==========================================================================
 void CDialogSelectDevice::on_buttonOk_clicked()
 {
-    emit resultDeviceInfo (selectedFlash);
+    emit resultDeviceInfo (&selectedFlash);
     close();
 }
 
@@ -171,7 +176,7 @@ void CDialogSelectDevice::on_comboBrand_currentIndexChanged(const QString &aStr)
     ui->comboDevice->clear ();
     ui->comboDevice->setCurrentIndex (-1);
     comboDeviceReady = false;
-    selectedFlash = NULL;
+    memset (&selectedFlash, 0, sizeof (selectedFlash));
     updateFlashInfo ();
 
     // No Brand selected
@@ -208,7 +213,7 @@ void CDialogSelectDevice::on_comboDevice_currentIndexChanged(const QString &aStr
         return;
 
     // Clear last selection
-    selectedFlash = NULL;
+    memset (&selectedFlash, 0, sizeof (selectedFlash));
     updateFlashInfo ();
 
     // No Device select
@@ -221,7 +226,7 @@ void CDialogSelectDevice::on_comboDevice_currentIndexChanged(const QString &aStr
 
     qDebug () << QString ().sprintf ("[DEBUG] %s %s selected", brand, device);
 
-    selectedFlash = flash_table->getSerialFlash (brand, device);
+    flash_table->getSerialFlash (&selectedFlash, brand, device);
 
     updateFlashInfo ();
 }

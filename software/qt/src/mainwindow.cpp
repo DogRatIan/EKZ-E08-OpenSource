@@ -57,12 +57,14 @@
 CMainWindow::CMainWindow (QWidget *aParent) :
     QMainWindow (aParent),
     ui(new Ui::CMainWindow),
-    ModelDataBuffer (this, GetFlashTable()->getMaximumSize()),
-    currentFlash (NULL)
+    ModelDataBuffer (this)
 {
     int i;
     int w;
     int h;
+
+    //
+    memset (&currentFlash, 0, sizeof (currentFlash));
 
     // Load UI
     ui->setupUi (this);
@@ -125,6 +127,23 @@ CMainWindow::CMainWindow (QWidget *aParent) :
     clearBuffer ();
 
     //
+    const char *msg = GetFlashTable()->loadFromFile ();
+    if (msg != NULL)
+    {
+        QMessageBox msgbox;
+
+        msgbox.setWindowTitle ("ERROR");
+        msgbox.setText (msg);
+        msgbox.setIcon (QMessageBox::Critical);
+        msgbox.setStandardButtons (QMessageBox::Ok);
+        msgbox.exec ();
+    }
+
+    //
+    ModelDataBuffer.setMaxDataSize (GetFlashTable()->getMaximumSize());
+
+
+    //
     loadConfig ();
 
 }
@@ -163,10 +182,10 @@ void CMainWindow::saveConfig (void)
     settings.setAttribute ("Port", lastPortName);
     settings.setAttribute ("LastPath", lastDataPath);
 
-    if (currentFlash != NULL)
+    if (currentFlash.id != 0)
     {
-        settings.setAttribute ("Brand", currentFlash->brand);
-        settings.setAttribute ("Device", currentFlash->partNumber);
+        settings.setAttribute ("Brand", currentFlash.brand);
+        settings.setAttribute ("Device", currentFlash.partNumber);
     }
 
     root.appendChild (settings);
@@ -187,6 +206,7 @@ void CMainWindow::saveConfig (void)
 //==========================================================================
 void CMainWindow::loadConfig (void)
 {
+    int ret;
     CFlashTable *flash_table = GetFlashTable();
 
     // Load Config file
@@ -209,21 +229,22 @@ void CMainWindow::loadConfig (void)
             {
                 lastPortName = settings.attribute("Port");
 
-                currentFlash = flash_table->getSerialFlash (settings.attribute("Brand").toUtf8().data(),
+                ret = flash_table->getSerialFlash (&currentFlash, settings.attribute("Brand").toUtf8().data(),
                                                                       settings.attribute("Device").toUtf8().data());
 
-                if (currentFlash != NULL)
+                if (ret >= 0)
                 {
                     QString str;
 
-                    ui->labelDeviceBrand->setText (currentFlash->brand);
-                    ui->labelDeviceName->setText (currentFlash->partNumber);
+                    ui->labelDeviceBrand->setText (currentFlash.brand);
+                    ui->labelDeviceName->setText (currentFlash.partNumber);
 
 
-                    str.sprintf ("%02lX %02lX %02lX", ((currentFlash->id >> 16) & 0xff), ((currentFlash->id >> 8) & 0xff), ((currentFlash->id >> 0) & 0xff));
+                    str.sprintf ("%02lX %02lX %02lX", ((currentFlash.id >> 16) & 0xff), ((currentFlash.id >> 8) & 0xff),
+                                 ((currentFlash.id >> 0) & 0xff));
                     ui->labelDeviceId->setText (str);
 
-                    str.sprintf ("%d KiB", currentFlash->totalSizeKiB);
+                    str.sprintf ("%d KiB", currentFlash.totalSizeKiB);
                     ui->labelDeviceSize->setText (str);
                 }
 
@@ -391,12 +412,7 @@ void CMainWindow::openDoAction (int aAction, const unsigned char *aPtr, unsigned
         if (aAction == DOACTIONDIALOG_DETECT)
             break;
 
-        if (currentFlash == NULL)
-        {
-            err = "No device selected.";
-            break;
-        }
-        if (currentFlash->id == 0)
+        if (currentFlash.id == 0)
         {
             err = "No device selected.";
             break;
@@ -404,7 +420,7 @@ void CMainWindow::openDoAction (int aAction, const unsigned char *aPtr, unsigned
 
         if (aSize)
         {
-            if (aSize > ((unsigned long)currentFlash->totalSizeKiB * 1024))
+            if (aSize > ((unsigned long)currentFlash.totalSizeKiB * 1024))
             {
                 err = "Buffer size larger than FLASH size.";
                 break;
@@ -426,7 +442,7 @@ void CMainWindow::openDoAction (int aAction, const unsigned char *aPtr, unsigned
     else
     {
         dialog.portName = portName;
-        dialog.flashInfo = currentFlash;
+        dialog.flashInfo = &currentFlash;
 
         if ((aPtr != NULL) && (aSize ))
         {
@@ -480,7 +496,7 @@ void CMainWindow::on_buttonSelectDevice_clicked()
 {
     CDialogSelectDevice dialog (this);
 
-    dialog.setFlashInfo (currentFlash);
+    dialog.setFlashInfo (&currentFlash);
 
     connect (&dialog, &CDialogSelectDevice::resultDeviceInfo, this, &CMainWindow::handleSelectDeviceResult);
     dialog.exec ();
@@ -625,9 +641,9 @@ void CMainWindow::handleProgrammerInfo (struct TProgrammerInfo aInfo)
 //==========================================================================
 void CMainWindow::handleSelectDeviceResult (const struct TFlashInfo *aResult)
 {
-    currentFlash = aResult;
+    memcpy (&currentFlash, aResult, sizeof (currentFlash));
 
-    if (currentFlash == NULL)
+    if (currentFlash.id == 0)
     {
         ui->labelDeviceBrand->setText ("-");
         ui->labelDeviceId->setText ("-");
@@ -638,14 +654,15 @@ void CMainWindow::handleSelectDeviceResult (const struct TFlashInfo *aResult)
     {
         QString str;
 
-        ui->labelDeviceBrand->setText (currentFlash->brand);
-        ui->labelDeviceName->setText (currentFlash->partNumber);
+        ui->labelDeviceBrand->setText (currentFlash.brand);
+        ui->labelDeviceName->setText (currentFlash.partNumber);
 
 
-        str.sprintf ("%02lX %02lX %02lX", ((currentFlash->id >> 16) & 0xff), ((currentFlash->id >> 8) & 0xff), ((currentFlash->id >> 0) & 0xff));
+        str.sprintf ("%02lX %02lX %02lX", ((currentFlash.id >> 16) & 0xff), ((currentFlash.id >> 8) & 0xff),
+                     ((currentFlash.id >> 0) & 0xff));
         ui->labelDeviceId->setText (str);
 
-        str.sprintf ("%d KiB", currentFlash->totalSizeKiB);
+        str.sprintf ("%d KiB", currentFlash.totalSizeKiB);
         ui->labelDeviceSize->setText (str);
 
     }

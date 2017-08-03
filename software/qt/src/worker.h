@@ -95,7 +95,7 @@ private:
 
     QString currentPortName;
     int currentAction;
-    const struct TFlashInfo *currentFlashInfo;
+    struct TFlashInfo currentFlashInfo;
     bool checkBoxValue;
 
     void setupProgrammer (CProgrammer *aProgrammer);

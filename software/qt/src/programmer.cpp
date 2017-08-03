@@ -756,6 +756,7 @@ int CProgrammer::verifyFlash (const unsigned char *aSrc, unsigned long aSize)
                     break;
             }
             errorMessage = QString ().sprintf ("Verify error at 0x%06lX.", addr + i);
+            qDebug () << QString ().sprintf ("%02X %02X %02X %02X", RxBuf[2], RxBuf[3], RxBuf[4], RxBuf[5]);
             return -1;
         }
 

@@ -28,7 +28,8 @@ SOURCES += src/main.cpp\
     src/err_chk.cpp \
     src/packer.cpp \
     src/dialogdoaction.cpp \
-    src/dialogproginfo.cpp
+    src/dialogproginfo.cpp \
+    src/jsoncpp.cpp
 
 HEADERS  += src/mainwindow.h \
     src/model_databuffer.h \
@@ -41,7 +42,9 @@ HEADERS  += src/mainwindow.h \
     src/err_chk.h \
     src/packer.h \
     src/dialogdoaction.h \
-    src/dialogproginfo.h
+    src/dialogproginfo.h \
+    src/json/json.h \
+    src/json/json-forwards.h
 
 FORMS    += src/mainwindow.ui \
     src/dialogabout.ui \

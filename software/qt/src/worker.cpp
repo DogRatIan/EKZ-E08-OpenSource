@@ -48,9 +48,9 @@ CWorker::CWorker (QObject * aParent) :
     dataBufferSize (0),
     abort (false),
     currentPortName ("COM1"),
-    currentAction (WORKERACTION_NONE),
-    currentFlashInfo (NULL)
+    currentAction (WORKERACTION_NONE)
 {
+    memset (&currentFlashInfo, 0, sizeof (currentFlashInfo));
 }
 
 //==========================================================================
@@ -182,7 +182,7 @@ void CWorker::setFlashInfo (const struct TFlashInfo *aFlashInfo)
     if (isRunning())
         return;
 
-    currentFlashInfo = aFlashInfo;
+    memcpy (&currentFlashInfo, aFlashInfo, sizeof (currentFlashInfo));
     actionSuccess = false;
 }
 
@@ -200,7 +200,7 @@ QString CWorker::getPortName (void)
 //==========================================================================
 const struct TFlashInfo *CWorker::getFlashInfo (void)
 {
-    return currentFlashInfo;
+    return &currentFlashInfo;
 }
 
 
@@ -251,9 +251,9 @@ void CWorker::setupProgrammer (CProgrammer *aProgrammer)
 {
     // Form Image file path
     QString image_path;
-    image_path.sprintf (":/asset/%s", currentFlashInfo->imageFile);
+    image_path.sprintf (":/asset/%s", currentFlashInfo.imageFile);
 
-    emit logMessage (QString ().sprintf("Using image file '%s'.", currentFlashInfo->imageFile));
+    emit logMessage (QString ().sprintf("Using image file '%s'.", currentFlashInfo.imageFile));
 
     // Load Image file
     if (aProgrammer->loadEkzImage (image_path) < 0)
@@ -342,14 +342,14 @@ void CWorker::doActionRead (CProgrammer *aProgrammer)
     qDebug () << QString ("[DEBUG] doActionRead");
 
     // Check Flash Info valid
-    if (currentFlashInfo == NULL)
+    if (currentFlashInfo.id == 0)
     {
         emit logMessage ("No device selected.");
         return;
     }
 
     // Allocate data buffer
-    flash_size = (unsigned long)currentFlashInfo->totalSizeKiB * 1024;
+    flash_size = (unsigned long)currentFlashInfo.totalSizeKiB * 1024;
     if (dataBufferSize != flash_size)
     {
         dataBufferSize = flash_size;
@@ -362,7 +362,7 @@ void CWorker::doActionRead (CProgrammer *aProgrammer)
     }
 
     // Show action to log
-    emit logMessage (QString ().sprintf ("Reading %s %s.", currentFlashInfo->brand, currentFlashInfo->partNumber));
+    emit logMessage (QString ().sprintf ("Reading %s %s.", currentFlashInfo.brand, currentFlashInfo.partNumber));
 
     // Setup Programmer
     setupProgrammer (aProgrammer);
@@ -374,13 +374,13 @@ void CWorker::doActionRead (CProgrammer *aProgrammer)
 
     emit logMessage (QString ().sprintf ("Device found. ID: %06lX.", flash_id));
 
-    if (currentFlashInfo->id != flash_id)
+    if (currentFlashInfo.id != flash_id)
     {
         throw (QString ("Device ID not match."));
     }
 
     // Enter 4-Byte Address Mode if > 16MiB
-    if (currentFlashInfo->totalSizeKiB > 16384)
+    if (currentFlashInfo.totalSizeKiB > 16384)
     {
         if (aProgrammer->enter4ByteAddrMode() < 0)
         {
@@ -391,7 +391,7 @@ void CWorker::doActionRead (CProgrammer *aProgrammer)
     }
 
     // Read data
-    emit logMessage (QString ().sprintf ("Reading %d KiB...", currentFlashInfo->totalSizeKiB));
+    emit logMessage (QString ().sprintf ("Reading %d KiB...", currentFlashInfo.totalSizeKiB));
     if (aProgrammer->readFlash(dataBuffer, dataBufferSize) < 0)
         throw (aProgrammer->errorMessage);
 
@@ -416,14 +416,14 @@ void CWorker::doActionWrite (CProgrammer *aProgrammer)
     qDebug () << QString ("[DEBUG] doActionWrite");
 
     // Check Flash Info valid
-    if (currentFlashInfo == NULL)
+    if (currentFlashInfo.id == 0)
     {
         emit logMessage ("No device selected.");
         return;
     }
 
     // Show action to log
-    emit logMessage (QString ().sprintf ("Writing %s %s.", currentFlashInfo->brand, currentFlashInfo->partNumber));
+    emit logMessage (QString ().sprintf ("Writing %s %s.", currentFlashInfo.brand, currentFlashInfo.partNumber));
 
     // Setup Programmer
     setupProgrammer (aProgrammer);
@@ -435,13 +435,13 @@ void CWorker::doActionWrite (CProgrammer *aProgrammer)
 
     emit logMessage (QString ().sprintf ("Device found. ID: %06lX.", flash_id));
 
-    if (currentFlashInfo->id != flash_id)
+    if (currentFlashInfo.id != flash_id)
     {
         throw (QString ("Device ID not match."));
     }
 
     // Enter 4-Byte Address Mode if > 16MiB
-    if (currentFlashInfo->totalSizeKiB > 16384)
+    if (currentFlashInfo.totalSizeKiB > 16384)
     {
         if (aProgrammer->enter4ByteAddrMode() < 0)
         {
@@ -456,14 +456,14 @@ void CWorker::doActionWrite (CProgrammer *aProgrammer)
         QString str;
 
         // Erase Device
-        str.sprintf ("Erase started. Max time is %lds.", currentFlashInfo->chipEraseTime);
+        str.sprintf ("Erase started. Max time is %ds.", currentFlashInfo.chipEraseTime);
         emit logMessage (str);
-        if (aProgrammer->eraseFlash (currentFlashInfo->chipEraseTime) < 0)
+        if (aProgrammer->eraseFlash (currentFlashInfo.chipEraseTime) < 0)
             throw (aProgrammer->errorMessage);
 
         // Blank Check
         emit logMessage (QString ("Blank Check."));
-        if (aProgrammer->blankCheck (currentFlashInfo->totalSizeKiB * 1024) < 0)
+        if (aProgrammer->blankCheck (currentFlashInfo.totalSizeKiB * 1024) < 0)
             throw (aProgrammer->errorMessage);
     }
 
@@ -498,14 +498,14 @@ void CWorker::doActionVerify (CProgrammer *aProgrammer)
     qDebug () << QString ("[DEBUG] doActionVerify");
 
     // Check Flash Info valid
-    if (currentFlashInfo == NULL)
+    if (currentFlashInfo.id == 0)
     {
         emit logMessage ("No device selected.");
         return;
     }
 
     // Show action to log
-    emit logMessage (QString ().sprintf ("Verify %s %s.", currentFlashInfo->brand, currentFlashInfo->partNumber));
+    emit logMessage (QString ().sprintf ("Verify %s %s.", currentFlashInfo.brand, currentFlashInfo.partNumber));
 
     // Setup Programmer
     setupProgrammer (aProgrammer);
@@ -517,13 +517,13 @@ void CWorker::doActionVerify (CProgrammer *aProgrammer)
 
     emit logMessage (QString ().sprintf ("Device found. ID: %06lX.", flash_id));
 
-    if (currentFlashInfo->id != flash_id)
+    if (currentFlashInfo.id != flash_id)
     {
         throw (QString ("Device ID not match."));
     }
 
     // Enter 4-Byte Address Mode if > 16MiB
-    if (currentFlashInfo->totalSizeKiB > 16384)
+    if (currentFlashInfo.totalSizeKiB > 16384)
     {
         if (aProgrammer->enter4ByteAddrMode() < 0)
         {
@@ -560,14 +560,14 @@ void CWorker::doActionErase (CProgrammer *aProgrammer)
     qDebug () << QString ("[DEBUG] doActionErase");
 
     // Check Flash Info valid
-    if (currentFlashInfo == NULL)
+    if (currentFlashInfo.id == 0)
     {
         emit logMessage ("No device selected.");
         return;
     }
 
     // Show action to log
-    emit logMessage (QString ().sprintf ("Erase %s %s.", currentFlashInfo->brand, currentFlashInfo->partNumber));
+    emit logMessage (QString ().sprintf ("Erase %s %s.", currentFlashInfo.brand, currentFlashInfo.partNumber));
 
     // Setup Programmer
     setupProgrammer (aProgrammer);
@@ -579,20 +579,20 @@ void CWorker::doActionErase (CProgrammer *aProgrammer)
 
     emit logMessage (QString ().sprintf ("Device found. ID: %06lX.", flash_id));
 
-    if (currentFlashInfo->id != flash_id)
+    if (currentFlashInfo.id != flash_id)
     {
         throw (QString ("Device ID not match."));
     }
 
     // Erase Device
-    str.sprintf ("Erase started. Max time is %lds.", currentFlashInfo->chipEraseTime);
+    str.sprintf ("Erase started. Max time is %ds.", currentFlashInfo.chipEraseTime);
     emit logMessage (str);
-    if (aProgrammer->eraseFlash (currentFlashInfo->chipEraseTime) < 0)
+    if (aProgrammer->eraseFlash (currentFlashInfo.chipEraseTime) < 0)
         throw (aProgrammer->errorMessage);
 
     // Blank Check
     emit logMessage (QString ("Blank Check."));
-    if (aProgrammer->blankCheck (currentFlashInfo->totalSizeKiB * 1024) < 0)
+    if (aProgrammer->blankCheck (currentFlashInfo.totalSizeKiB * 1024) < 0)
         throw (aProgrammer->errorMessage);
 
     // Exit User Program and Close port
@@ -613,6 +613,7 @@ void CWorker::doActionDetect (CProgrammer *aProgrammer)
 {
     unsigned long flash_id;
     int status;
+    int ret;
 
     qDebug () << QString ("[DEBUG] doActionDetect");
 
@@ -636,11 +637,10 @@ void CWorker::doActionDetect (CProgrammer *aProgrammer)
 
     emit logMessage (QString ().sprintf ("Status register: %02X.", status));
 
-
-    currentFlashInfo = GetFlashTable()->getSerialFlash (flash_id);
-    if (currentFlashInfo != NULL)
+    ret = GetFlashTable()->getSerialFlash (&currentFlashInfo, flash_id);
+    if (ret >= 0)
     {
-        emit logMessage (QString ().sprintf ("Device Info: %s %s.", currentFlashInfo->brand, currentFlashInfo->partNumber));
+        emit logMessage (QString ().sprintf ("Device Info: %s %s.", currentFlashInfo.brand, currentFlashInfo.partNumber));
     }
 
     // Exit User Program and Close port
@@ -648,7 +648,7 @@ void CWorker::doActionDetect (CProgrammer *aProgrammer)
     aProgrammer->closePort();
 
     //
-    if (currentFlashInfo == NULL)
+    if (currentFlashInfo.id == 0)
     {
         emit logMessage (QString ("No valid device found."));
     }

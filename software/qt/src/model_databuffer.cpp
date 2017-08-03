@@ -40,14 +40,13 @@
 //==========================================================================
 // Constructor
 //==========================================================================
-CModelDataBuffer::CModelDataBuffer (QObject *aParent, unsigned long aMaxDataSize) :
+CModelDataBuffer::CModelDataBuffer (QObject *aParent) :
     QAbstractTableModel (aParent),
     dataBuffer (NULL),
     dataBufferSize (0),
     viewOffset (0),
-    maxDataSize (aMaxDataSize)
+    maxDataSize (16 * 1024 * 1024)
 {
-
 }
 
 //==========================================================================
@@ -61,6 +60,13 @@ CModelDataBuffer::~CModelDataBuffer()
     dataBufferSize = 0;
 }
 
+//==========================================================================
+// Set Maximum Data Size
+//==========================================================================
+void CModelDataBuffer::setMaxDataSize (unsigned long aMaxDataSize)
+{
+    maxDataSize = aMaxDataSize;
+}
 
 //==========================================================================
 // Get ROW count

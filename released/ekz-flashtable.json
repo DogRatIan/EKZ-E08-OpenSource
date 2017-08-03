@@ -1,0 +1,434 @@
+[
+   {
+      "brand" : "MXIC",
+      "chipEraseTime" : 60,
+      "id" : "0xC22010",
+      "imageFile" : "spi-generic.ekz",
+      "partNumber" : "MX25L512",
+      "totalSizeKiB" : 64
+   },
+   {
+      "brand" : "MXIC",
+      "chipEraseTime" : 60,
+      "id" : "0xC22011",
+      "imageFile" : "spi-generic.ekz",
+      "partNumber" : "MX25L1005",
+      "totalSizeKiB" : 128
+   },
+   {
+      "brand" : "MXIC",
+      "chipEraseTime" : 60,
+      "id" : "0xC22012",
+      "imageFile" : "spi-generic.ekz",
+      "partNumber" : "MX25L2005",
+      "totalSizeKiB" : 256
+   },
+   {
+      "brand" : "MXIC",
+      "chipEraseTime" : 60,
+      "id" : "0xC22013",
+      "imageFile" : "spi-generic.ekz",
+      "partNumber" : "MX25L4005",
+      "totalSizeKiB" : 512
+   },
+   {
+      "brand" : "MXIC",
+      "chipEraseTime" : 60,
+      "id" : "0xC22014",
+      "imageFile" : "spi-generic.ekz",
+      "partNumber" : "MX25L8005",
+      "totalSizeKiB" : 1024
+   },
+   {
+      "brand" : "MXIC",
+      "chipEraseTime" : 60,
+      "id" : "0xC22015",
+      "imageFile" : "spi-generic.ekz",
+      "partNumber" : "MX25L1605",
+      "totalSizeKiB" : 2048
+   },
+   {
+      "brand" : "MXIC",
+      "chipEraseTime" : 60,
+      "id" : "0xC22016",
+      "imageFile" : "spi-generic.ekz",
+      "partNumber" : "MX25L3205",
+      "totalSizeKiB" : 4096
+   },
+   {
+      "brand" : "MXIC",
+      "chipEraseTime" : 60,
+      "id" : "0xC22017",
+      "imageFile" : "spi-generic.ekz",
+      "partNumber" : "MX25L6405",
+      "totalSizeKiB" : 8192
+   },
+   {
+      "brand" : "MXIC",
+      "chipEraseTime" : 150,
+      "id" : "0xC22019",
+      "imageFile" : "spi-generic.ekz",
+      "partNumber" : "MX25L25645",
+      "totalSizeKiB" : 32768
+   },
+   {
+      "brand" : "WINBOND",
+      "chipEraseTime" : 6,
+      "id" : "0xEF3011",
+      "imageFile" : "spi-generic.ekz",
+      "partNumber" : "W25X10",
+      "totalSizeKiB" : 128
+   },
+   {
+      "brand" : "WINBOND",
+      "chipEraseTime" : 6,
+      "id" : "0xEF3012",
+      "imageFile" : "spi-generic.ekz",
+      "partNumber" : "W25X20",
+      "totalSizeKiB" : 256
+   },
+   {
+      "brand" : "WINBOND",
+      "chipEraseTime" : 10,
+      "id" : "0xEF3013",
+      "imageFile" : "spi-generic.ekz",
+      "partNumber" : "W25X40",
+      "totalSizeKiB" : 512
+   },
+   {
+      "brand" : "WINBOND",
+      "chipEraseTime" : 20,
+      "id" : "0xEF3014",
+      "imageFile" : "spi-generic.ekz",
+      "partNumber" : "W25X80",
+      "totalSizeKiB" : 1024
+   },
+   {
+      "brand" : "WINBOND",
+      "chipEraseTime" : 40,
+      "id" : "0xEF3015",
+      "imageFile" : "spi-generic.ekz",
+      "partNumber" : "W25X16",
+      "totalSizeKiB" : 2048
+   },
+   {
+      "brand" : "WINBOND",
+      "chipEraseTime" : 40,
+      "id" : "0xEF4015",
+      "imageFile" : "spi-generic.ekz",
+      "partNumber" : "W25Q16",
+      "totalSizeKiB" : 2048
+   },
+   {
+      "brand" : "WINBOND",
+      "chipEraseTime" : 80,
+      "id" : "0xEF3016",
+      "imageFile" : "spi-generic.ekz",
+      "partNumber" : "W25X32",
+      "totalSizeKiB" : 4096
+   },
+   {
+      "brand" : "WINBOND",
+      "chipEraseTime" : 80,
+      "id" : "0xEF3017",
+      "imageFile" : "spi-generic.ekz",
+      "partNumber" : "W25X64",
+      "totalSizeKiB" : 8192
+   },
+   {
+      "brand" : "WINBOND",
+      "chipEraseTime" : 200,
+      "id" : "0xEF4018",
+      "imageFile" : "spi-generic.ekz",
+      "partNumber" : "W25Q128",
+      "totalSizeKiB" : 16384
+   },
+   {
+      "brand" : "WINBOND",
+      "chipEraseTime" : 400,
+      "id" : "0xEF4019",
+      "imageFile" : "spi-generic.ekz",
+      "partNumber" : "W25Q256",
+      "totalSizeKiB" : 32768
+   },
+   {
+      "brand" : "ATMEL",
+      "chipEraseTime" : 60,
+      "id" : "0x1F4300",
+      "imageFile" : "spi-generic.ekz",
+      "partNumber" : "AT25DF021",
+      "totalSizeKiB" : 256
+   },
+   {
+      "brand" : "ATMEL",
+      "chipEraseTime" : 60,
+      "id" : "0x1F4401",
+      "imageFile" : "spi-generic.ekz",
+      "partNumber" : "AT25DF041A",
+      "totalSizeKiB" : 512
+   },
+   {
+      "brand" : "ATMEL",
+      "chipEraseTime" : 60,
+      "id" : "0x1F4502",
+      "imageFile" : "spi-generic.ekz",
+      "partNumber" : "AT25DF081",
+      "totalSizeKiB" : 1024
+   },
+   {
+      "brand" : "ATMEL",
+      "chipEraseTime" : 60,
+      "id" : "0x1F4602",
+      "imageFile" : "spi-generic.ekz",
+      "partNumber" : "AT25DF161",
+      "totalSizeKiB" : 2048
+   },
+   {
+      "brand" : "ATMEL",
+      "chipEraseTime" : 60,
+      "id" : "0x1F4700",
+      "imageFile" : "spi-generic.ekz",
+      "partNumber" : "AT(25/26)DF321",
+      "totalSizeKiB" : 4096
+   },
+   {
+      "brand" : "ATMEL",
+      "chipEraseTime" : 60,
+      "id" : "0x1F4701",
+      "imageFile" : "spi-generic.ekz",
+      "partNumber" : "AT25DF321A",
+      "totalSizeKiB" : 4096
+   },
+   {
+      "brand" : "ATMEL",
+      "chipEraseTime" : 60,
+      "id" : "0x1F4800",
+      "imageFile" : "spi-generic.ekz",
+      "partNumber" : "AT25DF641",
+      "totalSizeKiB" : 8192
+   },
+   {
+      "brand" : "ATMEL",
+      "chipEraseTime" : 60,
+      "id" : "0x1F4501",
+      "imageFile" : "spi-generic.ekz",
+      "partNumber" : "AT26DF081A",
+      "totalSizeKiB" : 1024
+   },
+   {
+      "brand" : "ATMEL",
+      "chipEraseTime" : 60,
+      "id" : "0x1F4600",
+      "imageFile" : "spi-generic.ekz",
+      "partNumber" : "AT26DF161",
+      "totalSizeKiB" : 2048
+   },
+   {
+      "brand" : "ATMEL",
+      "chipEraseTime" : 60,
+      "id" : "0x1F4601",
+      "imageFile" : "spi-generic.ekz",
+      "partNumber" : "AT26DF161A",
+      "totalSizeKiB" : 2048
+   },
+   {
+      "brand" : "SPANSION",
+      "chipEraseTime" : 60,
+      "id" : "0x010212",
+      "imageFile" : "spi-generic.ekz",
+      "partNumber" : "S25FL004A/040A",
+      "totalSizeKiB" : 512
+   },
+   {
+      "brand" : "SPANSION",
+      "chipEraseTime" : 60,
+      "id" : "0x010213",
+      "imageFile" : "spi-generic.ekz",
+      "partNumber" : "S25FL008A",
+      "totalSizeKiB" : 1024
+   },
+   {
+      "brand" : "SPANSION",
+      "chipEraseTime" : 60,
+      "id" : "0x010214",
+      "imageFile" : "spi-generic.ekz",
+      "partNumber" : "S25FL016A",
+      "totalSizeKiB" : 2048
+   },
+   {
+      "brand" : "SPANSION",
+      "chipEraseTime" : 60,
+      "id" : "0x010215",
+      "imageFile" : "spi-generic.ekz",
+      "partNumber" : "S25FL032A",
+      "totalSizeKiB" : 4096
+   },
+   {
+      "brand" : "SPANSION",
+      "chipEraseTime" : 60,
+      "id" : "0x010216",
+      "imageFile" : "spi-generic.ekz",
+      "partNumber" : "S25FL064A",
+      "totalSizeKiB" : 8192
+   },
+   {
+      "brand" : "EON",
+      "chipEraseTime" : 60,
+      "id" : "0x1C3014",
+      "imageFile" : "spi-generic.ekz",
+      "partNumber" : "EN25D80",
+      "totalSizeKiB" : 1024
+   },
+   {
+      "brand" : "EON",
+      "chipEraseTime" : 60,
+      "id" : "0x1C3114",
+      "imageFile" : "spi-generic.ekz",
+      "partNumber" : "EN25F80",
+      "totalSizeKiB" : 1024
+   },
+   {
+      "brand" : "EON",
+      "chipEraseTime" : 60,
+      "id" : "0x1C5114",
+      "imageFile" : "spi-generic.ekz",
+      "partNumber" : "EN25T80",
+      "totalSizeKiB" : 1024
+   },
+   {
+      "brand" : "AMIC",
+      "chipEraseTime" : 60,
+      "id" : "0x373010",
+      "imageFile" : "spi-generic.ekz",
+      "partNumber" : "A25L512",
+      "totalSizeKiB" : 64
+   },
+   {
+      "brand" : "AMIC",
+      "chipEraseTime" : 60,
+      "id" : "0x373011",
+      "imageFile" : "spi-generic.ekz",
+      "partNumber" : "A25L010",
+      "totalSizeKiB" : 128
+   },
+   {
+      "brand" : "AMIC",
+      "chipEraseTime" : 60,
+      "id" : "0x373012",
+      "imageFile" : "spi-generic.ekz",
+      "partNumber" : "A25L020",
+      "totalSizeKiB" : 256
+   },
+   {
+      "brand" : "AMIC",
+      "chipEraseTime" : 60,
+      "id" : "0x373013",
+      "imageFile" : "spi-generic.ekz",
+      "partNumber" : "A25L040",
+      "totalSizeKiB" : 512
+   },
+   {
+      "brand" : "AMIC",
+      "chipEraseTime" : 60,
+      "id" : "0x373014",
+      "imageFile" : "spi-generic.ekz",
+      "partNumber" : "A25L080",
+      "totalSizeKiB" : 1024
+   },
+   {
+      "brand" : "AMIC",
+      "chipEraseTime" : 60,
+      "id" : "0x373015",
+      "imageFile" : "spi-generic.ekz",
+      "partNumber" : "A25L016",
+      "totalSizeKiB" : 2048
+   },
+   {
+      "brand" : "AMIC",
+      "chipEraseTime" : 60,
+      "id" : "0x373016",
+      "imageFile" : "spi-generic.ekz",
+      "partNumber" : "A25L032",
+      "totalSizeKiB" : 4096
+   },
+   {
+      "brand" : "SST",
+      "chipEraseTime" : 60,
+      "id" : "0xBF48FF",
+      "imageFile" : "spi-sst.ekz",
+      "partNumber" : "SST25VF512/A",
+      "totalSizeKiB" : 64
+   },
+   {
+      "brand" : "SST",
+      "chipEraseTime" : 60,
+      "id" : "0xBF49FF",
+      "imageFile" : "spi-sst.ekz",
+      "partNumber" : "SST25(LF/VF)010/A",
+      "totalSizeKiB" : 128
+   },
+   {
+      "brand" : "SST",
+      "chipEraseTime" : 60,
+      "id" : "0xBF43FF",
+      "imageFile" : "spi-sst.ekz",
+      "partNumber" : "SST25(LF/VF)020/A",
+      "totalSizeKiB" : 256
+   },
+   {
+      "brand" : "SST",
+      "chipEraseTime" : 60,
+      "id" : "0xBF258C",
+      "imageFile" : "spi-sst.ekz",
+      "partNumber" : "SST25(PF/VF)020B",
+      "totalSizeKiB" : 256
+   },
+   {
+      "brand" : "SST",
+      "chipEraseTime" : 60,
+      "id" : "0xBF44FF",
+      "imageFile" : "spi-sst.ekz",
+      "partNumber" : "SST25(LF/VF)040/A",
+      "totalSizeKiB" : 512
+   },
+   {
+      "brand" : "SST",
+      "chipEraseTime" : 60,
+      "id" : "0xBF258D",
+      "imageFile" : "spi-sst.ekz",
+      "partNumber" : "SST25(PF/VF)040B",
+      "totalSizeKiB" : 512
+   },
+   {
+      "brand" : "SST",
+      "chipEraseTime" : 60,
+      "id" : "0xBF258E",
+      "imageFile" : "spi-sst.ekz",
+      "partNumber" : "SST25(PF/VF)080B",
+      "totalSizeKiB" : 1024
+   },
+   {
+      "brand" : "SST",
+      "chipEraseTime" : 60,
+      "id" : "0xBF2541",
+      "imageFile" : "spi-sst.ekz",
+      "partNumber" : "SST25VF016B",
+      "totalSizeKiB" : 2048
+   },
+   {
+      "brand" : "SST",
+      "chipEraseTime" : 60,
+      "id" : "0xBF254A",
+      "imageFile" : "spi-sst.ekz",
+      "partNumber" : "SST25VF032B",
+      "totalSizeKiB" : 4096
+   },
+   {
+      "brand" : "China",
+      "chipEraseTime" : 60,
+      "id" : "0xC86017",
+      "imageFile" : "spi-generic.ekz",
+      "partNumber" : "25L064",
+      "totalSizeKiB" : 8192
+   }
+]
